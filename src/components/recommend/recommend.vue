@@ -1,26 +1,34 @@
 <template>
 	<div>
-		{{name}}
+		我是推荐
 	</div>
 </template>
 
 <script>
-	import {getRecommend} from '../../api/recommend'
-	import {ERR_OK} from '../../api/config'
-	export default{
-		data(){
+	import Vue from 'vue'
+	import { getRecommend } from '../../api/recommend'
+	import { ERR_OK } from '../../api/config'
+	import vueResource from 'vue-resource'
+	Vue.use(vueResource);
+
+	export default {
+		data() {
 			return {
-				name:null,
+				
 			}
 		},
-		created(){
+		created() {
 			this._getRecommend();
 		},
-		methods:{
-			_getRecommend(){
-				getRecommend().then((res) => {
-					if(res.code === ERR_OK){
-						console.log(res.data)
+		methods: {
+			_getRecommend() {
+				this.$http.jsonp(getRecommend.url, {
+					params: getRecommend.params,
+					jsonp: getRecommend.jsonp
+				}).then((resolve) => {
+					
+					if(resolve.body.code == ERR_OK) {
+						console.log(resolve.body.data);
 					}
 				})
 			}
@@ -29,5 +37,5 @@
 </script>
 
 <style>
-	
+
 </style>

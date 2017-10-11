@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import ranking from '@/components/ranking/ranking'
 import singer from '@/components/singer/singer'
 import recommend from '@/components/recommend/recommend'
@@ -12,6 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect:'/recommend'
     },
     {
     	path:'/recommend',
