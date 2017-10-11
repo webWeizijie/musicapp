@@ -1,13 +1,10 @@
 <template>
 	<div>
-		<lista></lista><br /><br />
-		<listb></listb>
+		
 	</div>
 </template>
 
 <script>
-import lista from "./lisa"
-import listb from "./lisb"
 export default {
   name: 'HelloWorld',
   data () { 
@@ -16,8 +13,6 @@ export default {
     }
   },
   components:{
-  	lista,
-  	listb
   }
 }
 </script>
