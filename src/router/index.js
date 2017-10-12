@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ranking from '@/components/ranking/ranking'
-import singer from '@/components/singer/singer'
-import recommend from '@/components/recommend/recommend'
-import search from '@/components/search/search'
+import ranking from 'components/ranking/ranking'
+import singer from 'components/singer/singer'
+import recommend from 'components/recommend/recommend'
+import search from 'components/search/search'
 
 Vue.use(Router)
 
