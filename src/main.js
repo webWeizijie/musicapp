@@ -6,6 +6,12 @@ import router from './router'
 import store from './store/store.js'
 import htmlCssAuto from './common/js/htmlAuto.js'
 import fastClick from 'fastclick'
+import vueLazyLoad from 'vue-lazyload'
+
+Vue.use(vueLazyLoad,{
+	loading:require('common/image/default.png'),
+	attempt: 1
+})
 fastClick.attach(document.body);  
 
 Vue.config.productionTip = false

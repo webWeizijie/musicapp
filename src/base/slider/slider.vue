@@ -41,7 +41,6 @@
 				if(this.autoPlay == true){
 					this._play()
 				}
-				
 			},20)
 			window.addEventListener('resize',() => {
 				if(!this.slider){
@@ -110,25 +109,31 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.slider{
-		width: 100%;
-		overflow: hidden;
+		min-height: 1px;
 		position: relative;
 	}
 	.slider-group{
+		white-space: nowrap;
+		overflow: hidden;
 		
+	}
+	.slider-group-item{
+		float: left;
+		box-sizing: border-box;
+        overflow: hidden;
+        text-align: center;
 	}
 	.slider-group a{
 		display: block;
 		width: 100%;
+		overflow: hidden;
 	}
 	.slider-group img{
 		display: block;
 		width: 100%;
-	}
-	.slider-group-item{
-		float: left;
+		overflow: hidden;
 	}
 	.slider-current{
 		width: 100%;

@@ -44,5 +44,7 @@
 		justify-content: flex-end;
 		position: absolute;
 		right: 0.2rem;
+		top: 0.18rem;
 	}
+	    
 </style>

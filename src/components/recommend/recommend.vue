@@ -1,11 +1,11 @@
 <template>
-	<div class="recommend-box" ref="recommendBox">
+	<scroll-view class="recommend-box" ref="recommendBox" :data="discList">
 		<div>
 			<div class="banner-swiper" v-if="recommend">
 				<slider>
 					<div v-for="item in recommend.slider">
 						<a :href="item.linkUrl">
-							<img :src="item.picUrl" alt="" />
+							<img @load="imgLoad" :src="item.picUrl" alt=""/>
 						</a>
 					</div>
 				</slider>
@@ -14,33 +14,36 @@
 				<div class="recommend-list-title">
 					热门歌曲推荐
 				</div>
+				<div class="recommend-loading" v-show="!discList.length">
+					<loading></loading>
+				</div>
 				<div>
 					<ul>
 						<li v-for="item in discList">
-							<div class="recommend-img"><img :src="item.imgurl" /></div>
+							<div class="recommend-img"><a href="https://www.baidu.com"><img v-lazy="item.imgurl"/></a></div>
 							<div class="recommend-cont">
 								<div class="recommend-cont-info">
 									<h2>{{item.creator.name}}</h2>
 									<p>{{item.dissname}}</p>	
 								</div>
-								
 							</div>
 						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
-	</div>
+	</scroll-view>
 </template>
 
 <script>
+	import loading from 'base/loading/loading'
 	import Vue from 'vue'
+	import slider from 'base/slider/slider'
 	import { getRecommend, getDiscList } from 'api/recommend'
 	import { ERR_OK } from 'api/config'
 	import vueResource from 'vue-resource'
-	import slider from 'base/slider/slider'
 	import axios from 'axios'
-	import BScroll from 'better-scroll'
+	import scrollView from 'base/scroll/scroll'
 	Vue.use(vueResource);
 
 	export default {
@@ -53,8 +56,6 @@
 		created() {
 			this._getRecommend();
 			this._getDiscList();
-			
-
 		},
 		methods: {
 			_getRecommend() {
@@ -69,14 +70,13 @@
 			},
 			_getDiscList() {
 				this.$http.get(getDiscList.url, {
-
 					params: getDiscList.params
 				}).then((res) => {
 					if(res.body.code == ERR_OK) {
-						this.discList = res.body.data.list;
-						this.$nextTick(() => {
-							this._initDiscListBox()
+						setTimeout(()=>{
+							this.discList = res.body.data.list;	
 						})
+						
 					}
 				})
 				//				axios.get('/api/getDiscList',{
@@ -86,38 +86,43 @@
 				//					console.log(res.data)
 				//				})
 			},
-			_initDiscListBox(){
-				this.recommendBox = new BScroll(this.$refs.recommendBox, {
-					click: true,
-				})
+			imgLoad(){
+				if(!this.cheackLoad){
+					setTimeout(()=>{
+						this.$refs.recommendBox.refresh();
+					},20)
+					this.cheackLoad = true;
+				}
 			}
 		},
 		components: {
 			slider,
+			scrollView,
+			loading
 		}
 	}
 </script>
 
 <style>
 	.recommend-box {
-		width: 100%;
-		position: fixed;
-		bottom: 0;
-		top: 1.3rem;
-		overflow: hidden;
+		
 	}
 	
 	.banner-swiper {
 		width: 100%;
+		overflow: hidden;
+		height: 288;
 	}
 	
-	.recommend-list {}
+	.recommend-list {
+		position: relative;
+	}
 	
 	.recommend-list-title {
 		color: #ffcd32;
-		font-size: 0.27rem;
+		font-size: 0.25rem;
 		text-align: center;
-		padding: 0.4rem 0 0.3rem 0;
+		padding: 0.4rem 0 0.4rem 0;
 	}
 	
 	.recommend-list ul li {
@@ -139,20 +144,31 @@
 	.recommend-cont {
 		margin-left: 0.3rem;
 		flex-grow: 1;
-		
+		display: table;
+		width: 4.3rem;
+		height: 1rem;
 	}
-	
+	.recommend-cont-info{
+		display:table-cell;
+		vertical-align: middle;
+	}
 	.recommend-list .recommend-cont h2 {
-		font-size: 0.26rem;
+		font-size: 0.25rem;
 		color: #ffffff;
-		margin-top: 0.08rem;
 		font-weight: 400;
 	}
 	
 	.recommend-cont p {
-		margin-top: 0.24rem;
-		font-size: 0.23rem;
+		margin-top: 0.23rem;
+		font-size: 0.24rem;
 		opacity: 0.6;
 		line-height: 0.28rem;
+	}
+	.recommend-loading{
+		position:fixed;
+		width: 100%;
+		transform: translateY(100%);
+		left: 0;
+		z-index: 9;
 	}
 </style>

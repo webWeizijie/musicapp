@@ -43,6 +43,7 @@
 		flex-grow: 1;
 		flex-shrink: 0;
 		text-align: center;
+		color: hsla(0,0%,100%,.5);
 	}
 	
 	.music-nav ul li .router-link-active {

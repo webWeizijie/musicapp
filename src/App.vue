@@ -3,7 +3,7 @@
   	<v-header></v-header>
   	<tabs></tabs>
   		<keep-alive>
-  			<router-view></router-view>
+  		<router-view class="tab-conts"></router-view>
   		</keep-alive>
   </div>
 </template>
@@ -11,6 +11,7 @@
 <script>
 import vHeader from 'components/v-header/v-header'
 import tabs from 'components/tabs/tabs'
+
 export default {
   components:{
   	vHeader,
@@ -24,5 +25,12 @@ export default {
 @import './common/css/icon.css';
 #app{
 	color:#ffffff;
+}
+.tab-conts{
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	top: 1.3rem;
+	overflow: hidden;
 }
 </style>
