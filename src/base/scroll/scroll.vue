@@ -1,6 +1,7 @@
 <template>
 	<div ref="scrollView">
-		<slot text="hello from child"></slot>
+		
+		<slot></slot>
 	</div>
 </template>
 
@@ -21,6 +22,10 @@
 			probeType:{
 				type:Number,
 				default:0
+			},
+			listenScroll:{
+				type:Boolean,
+				default:false,
 			}
 		},
 		data(){
@@ -39,7 +44,7 @@
 					click:this.click,
 					probeType:this.probeType,
 				})
-				if(this.probeType != 0){
+				if(this.listenScroll){
 					this.scrollView.on('scroll',(pos)=>{
 						this.scrollY = parseInt(-pos.y);
 						this.$emit('getScrollJs',this.scrollY);
@@ -59,7 +64,7 @@
 				this.scrollView && this.scrollView.scrollTo.apply(this.scrollView,arguments);
 			},
 			scrollToElement(){	
-				this.scrollView && this.scrollView.scrollToElement.apply(this.scrollView,arguments);
+				this.scrollView && this.scrollView.scrollElement.apply(this.scrollView,arguments);
 			}
 			
 		},
@@ -68,6 +73,7 @@
 				setTimeout(()=>{
 					this.refresh()
 				},20)
+				
 			}
 		}
 	}

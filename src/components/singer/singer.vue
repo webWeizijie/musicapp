@@ -1,25 +1,8 @@
 <template>
-	<scroll-view class="singer-box" :data="singerList" :probeType="probeType" ref="scroll" @getScrollJs="getScroll">
-		<div class="singer-scroll" ref="singerScroll">
-			<div class="singer-list" v-for="item in singerList">
-				<div class="singer-title">{{item.title}}</div>
-				<div class="singer-list-cont">
-					<ul>
-						<li v-for="singers in item.item">
-							<div><img v-lazy="singers.picUrl" /></div>
-							<div class="name">{{singers.name}}</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="singer-choose-list">
-			<ul>
-				<!--<div>{{initSingerHeight}}</div>-->
-				<li v-for="(item,index) in singerList" :class="{'active':index == nowScrollIndex}" @touchstart="scrollTo(index)" @touchmove.stop.prevent="moveScrollto">{{item.title=='热门'?'热':item.title}}</li>
-			</ul>
-		</div>
-	</scroll-view>
+	<div>
+		<loading v-show="singerList == ''"></loading>
+		<list-view :data="singerList" v-if="singerList != ''" class="singer-box"></list-view>
+	</div>
 </template>
 
 <script>
@@ -27,17 +10,14 @@
 	import vueResource from 'vue-resource'
 	import { getSinger } from 'api/singer.js'
 	import Singer from 'common/js/singer'
+	import listView from 'base/listView/listView'
+	import loading from 'base/loading/loading'
 	let HOT_NAME = '热门';
 	let HOT_LENGTH = 10;
 	export default {
 		data() {
 			return {
 				singerList: [],
-				probeType: 3,
-				singersHeight: [],
-				scrollChildren: [],
-				scrollY: 0,
-				num: 0,
 			}
 		},
 		methods: {
@@ -48,9 +28,6 @@
 				}).then((res) => {
 					this.singerData = res.body.data.list;
 					this._initSingerList();
-					this.$nextTick(() => {
-						this.initSingerHeight();
-					})
 				})
 			},
 			_initSingerList() {
@@ -97,71 +74,33 @@
 					return a.title.charCodeAt(0) - b.title.charCodeAt(0);
 				})
 				this.singerList = hot.concat(ret);
-
 			},
-			initSingerHeight() {
-				if(this.singerList != '') {
-					let scrollChildren = this.$refs.singerScroll.children;
-					this.scrollChildren = scrollChildren
-					let singersHeight = [];
-					let height = 0;
-					singersHeight.push(height);
-					for(let i = 0; i < scrollChildren.length; i++) {
-						height += scrollChildren[i].clientHeight;
-						singersHeight.push(parseInt(height) - 1);
-					}
-					this.singersHeight = singersHeight
-				}
-
-			},
-			getScroll(scrollY) {
-				if(scrollY < 0) {
-					this.scrollY = 0;
-				} else {
-					this.scrollY = scrollY;
-				}
-
-			},
-			scrollTo(index) {
-				this.$refs.scroll.scrollTo(0,-this.singersHeight[index],600);
-				console.log(this.singersHeight[index])
-			},
-			moveScrollto(){
-				
-			}
 		},
 		mounted() {
-			setTimeout(() => {
-				this._getSingerData();
-			}, 20)
+			this._getSingerData();
 		},
 		components: {
 			scrollView,
+			listView,
+			loading,
 		},
 		computed: {
-			nowScrollIndex() {
-				for(let i = 0; i < this.singersHeight.length; i++) {
-					let height1 = this.singersHeight[i];
-					let height2 = this.singersHeight[i + 1]
-					if(!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-						//this.num = i;
-						return i
-					}
-				}
-				return 0
-			}
+			
 		},
 		watch: {
-			scrollY() {
 
-			}
 		}
 	}
 </script>
 
 <style scoped>
-	.singer-box {}
-	
+	.singer-box {
+		width: 100%;
+	    position: absolute;
+	    top: 0;
+	    height: 100%;
+	    overflow: hidden;
+	}
 	.singer-title {
 		height: 0.49rem;
 		line-height: 0.49rem;

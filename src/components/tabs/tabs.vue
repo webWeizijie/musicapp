@@ -54,7 +54,7 @@
 	.music-nav ul li .router-link-active:before {
 		height: 0.03rem;
 		position: absolute;
-		bottom: 0.1rem;
+		bottom: 0.13rem;
 		width: 0.46rem;
 		content: '';
 		background: #FFCD32;

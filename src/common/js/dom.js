@@ -17,8 +17,8 @@ export function getData(el,name,val){
 	const prefix = 'data-';
 	const name1 = prefix + name;
 	if(val){
-		el.setAttribute(name1,val);
+		return el.setAttribute(name1,val);
 	}else{
-		el.getAttribute(name1);
+		return el.getAttribute(name1);
 	}
 }
