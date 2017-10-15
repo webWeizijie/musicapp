@@ -28,15 +28,15 @@
 		width: 100%;
 		position: fixed;
 		top: 0.7rem;
-		height: 0.6rem;
-		line-height: 0.6rem;
+		height: 0.73rem;
+		line-height: 0.76rem;
 	}
 	
 	.music-nav ul {
 		display: flex;
 		flex-flow: row nowrap;
 		align-items: center;
-		font-size: 0.25rem;
+		font-size: 0.228rem;
 	}
 	
 	.music-nav ul li {
@@ -54,8 +54,8 @@
 	.music-nav ul li .router-link-active:before {
 		height: 0.03rem;
 		position: absolute;
-		bottom: 0.04rem;
-		width: 0.5rem;
+		bottom: 0.1rem;
+		width: 0.46rem;
 		content: '';
 		background: #FFCD32;
 	}

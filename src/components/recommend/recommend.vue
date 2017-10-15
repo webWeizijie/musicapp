@@ -120,7 +120,7 @@
 	
 	.recommend-list-title {
 		color: #ffcd32;
-		font-size: 0.25rem;
+		font-size: 0.23rem;
 		text-align: center;
 		padding: 0.4rem 0 0.4rem 0;
 	}
@@ -153,15 +153,15 @@
 		vertical-align: middle;
 	}
 	.recommend-list .recommend-cont h2 {
-		font-size: 0.25rem;
+		font-size: 0.23rem;
 		color: #ffffff;
 		font-weight: 400;
 	}
 	
 	.recommend-cont p {
 		margin-top: 0.23rem;
-		font-size: 0.24rem;
-		opacity: 0.6;
+		font-size: 0.23rem;
+		opacity: 0.4;
 		line-height: 0.28rem;
 	}
 	.recommend-loading{

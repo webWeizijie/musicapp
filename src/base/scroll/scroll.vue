@@ -1,6 +1,6 @@
 <template>
 	<div ref="scrollView">
-		<slot></slot>
+		<slot text="hello from child"></slot>
 	</div>
 </template>
 
@@ -23,6 +23,11 @@
 				default:0
 			}
 		},
+		data(){
+			return {
+				scrollY:0,
+			}
+		},
 		mounted(){
 			setTimeout(()=>{
 				this._initScrollView()
@@ -34,6 +39,12 @@
 					click:this.click,
 					probeType:this.probeType,
 				})
+				if(this.probeType != 0){
+					this.scrollView.on('scroll',(pos)=>{
+						this.scrollY = parseInt(-pos.y);
+						this.$emit('getScrollJs',this.scrollY);
+					})
+				}
 			},
 			enable(){
 				this.scrollView && this.scrollView.enable();
@@ -44,6 +55,13 @@
 			disable(){
 				this.scrollView && this.scrollView.disable();
 			},
+			scrollTo(){
+				this.scrollView && this.scrollView.scrollTo.apply(this.scrollView,arguments);
+			},
+			scrollToElement(){	
+				this.scrollView && this.scrollView.scrollToElement.apply(this.scrollView,arguments);
+			}
+			
 		},
 		watch:{
 			data(){

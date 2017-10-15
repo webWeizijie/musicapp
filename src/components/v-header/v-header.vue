@@ -43,8 +43,8 @@
 		font-size:0.318rem;
 		justify-content: flex-end;
 		position: absolute;
-		right: 0.2rem;
-		top: 0.18rem;
+		right: 0.208rem;
+		top: 0.21rem;
 	}
 	    
 </style>
