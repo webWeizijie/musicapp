@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<loading v-show="singerList == ''"></loading>
-		<list-view :data="singerList" v-if="singerList != ''" class="singer-box"></list-view>
+		<list-view :data="singerList" v-if="singerList != ''" class="singer-box" @select="selectSinger"></list-view>
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -12,6 +13,9 @@
 	import Singer from 'common/js/singer'
 	import listView from 'base/listView/listView'
 	import loading from 'base/loading/loading'
+	import { mapMutations } from 'vuex'
+	
+	
 	let HOT_NAME = '热门';
 	let HOT_LENGTH = 10;
 	export default {
@@ -75,6 +79,15 @@
 				})
 				this.singerList = hot.concat(ret);
 			},
+			selectSinger(singer){
+				this.$router.push({
+					path:`/singer/${singer.id}`
+				})
+				this.getMusic(singer);
+			},
+			...mapMutations({
+				getMusic:'GET_MUSIC',
+			})
 		},
 		mounted() {
 			this._getSingerData();
@@ -100,6 +113,7 @@
 	    top: 0;
 	    height: 100%;
 	    overflow: hidden;
+	   
 	}
 	.singer-title {
 		height: 0.49rem;

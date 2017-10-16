@@ -25,6 +25,7 @@
 		flex-wrap: nowrap;
 		justify-content: center;
 		position: relative;
+		z-index: 9;
 	}
 	.icon-mine{
 		color: #ffffff;

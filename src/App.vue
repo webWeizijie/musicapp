@@ -31,6 +31,7 @@ export default {
 	position: fixed;
 	bottom: 0;
 	top: 1.43rem;
-	overflow: hidden;
+	z-index: 10;
+	
 }
 </style>

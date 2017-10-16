@@ -12,7 +12,7 @@
 			</div>
 			<div class="recommend-list">
 				<div class="recommend-list-title">
-					热门歌曲推荐
+					热门歌单推荐
 				</div>
 				<div class="recommend-loading" v-show="!discList.length">
 					<loading></loading>
@@ -105,7 +105,7 @@
 
 <style>
 	.recommend-box {
-		
+		overflow: hidden;
 	}
 	
 	.banner-swiper {

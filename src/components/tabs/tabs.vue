@@ -30,6 +30,8 @@
 		top: 0.7rem;
 		height: 0.73rem;
 		line-height: 0.76rem;
+		z-index: 9;
+		background: #222222;
 	}
 	
 	.music-nav ul {

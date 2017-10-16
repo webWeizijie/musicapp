@@ -73,7 +73,6 @@
 				setTimeout(()=>{
 					this.refresh()
 				},20)
-				
 			}
 		}
 	}

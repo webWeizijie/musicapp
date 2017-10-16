@@ -6,7 +6,7 @@
 				<div class="singer-title">{{item.title}}</div>
 				<div class="singer-list-cont">
 					<ul>
-						<li v-for="singers in item.item">
+						<li v-for="singers in item.item"  @click="selectSinger(singers)">
 							<div><img v-lazy="singers.picUrl" /></div>
 							<div class="name">{{singers.name}}</div>
 						</li>
@@ -110,6 +110,9 @@
 				this.$refs.scroll.scrollTo(0, -this.singersHeight[deliat], 0);
 				this.scrollY = this.singersHeight[deliat]
 				console.log(this.lastDisY,this.firstDisY,this.scrollListHeight,DisY+parseInt(this.firstIndex),this.nowScrollIndex)
+			},
+			selectSinger(item){
+				this.$emit('select',item);
 			}
 		},
 		mounted() {
@@ -194,7 +197,9 @@
 		font-family: Helvetica;
 	}
 	
-	.singer-scroll {}
+	.singer-scroll {
+		
+	}
 	
 	.singer-choose-list ul li {
 		font-size: 0.18rem;
