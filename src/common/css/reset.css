@@ -101,7 +101,7 @@ svg{
   fill: currentColor;
   /* path 和 stroke 溢出 viewBox 部分在 IE 下会显示
      normalize.css 中也包含这行 */
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 .clearfix{
 	display: inline-block;

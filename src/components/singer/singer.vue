@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<loading v-show="singerList == ''"></loading>
+		<div class="loading-box">
+			<loading v-show="singerList == ''"></loading>
+		</div>
 		<list-view :data="singerList" v-if="singerList != ''" class="singer-box" @select="selectSinger"></list-view>
 		<router-view></router-view>
 	</div>
@@ -173,5 +175,10 @@
 	
 	.singer-choose-list ul li.active {
 		color: #ffcd32;
+	}
+	.loading-box{
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 </style>

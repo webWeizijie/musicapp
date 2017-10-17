@@ -109,7 +109,7 @@
 				}
 				this.$refs.scroll.scrollTo(0, -this.singersHeight[deliat], 0);
 				this.scrollY = this.singersHeight[deliat]
-				console.log(this.lastDisY,this.firstDisY,this.scrollListHeight,DisY+parseInt(this.firstIndex),this.nowScrollIndex)
+				
 			},
 			selectSinger(item){
 				this.$emit('select',item);
@@ -189,8 +189,8 @@
 		right: 0;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 0.32rem;
-		padding: 0.3rem 0;
+		width: 0.29rem;
+		padding: 0.2rem 0;
 		border-radius: 0.2rem;
 		text-align: center;
 		background: rgba(0, 0, 0, .3);
@@ -202,8 +202,8 @@
 	}
 	
 	.singer-choose-list ul li {
-		font-size: 0.18rem;
-		padding: 0.049rem;
+		font-size: 0.16rem;
+		padding: 0.04rem;
 		color: hsla(0, 0%, 100%, .5);
 	}
 	

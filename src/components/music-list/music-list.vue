@@ -1,11 +1,14 @@
 <template>
 	<div class="music-list">
-		<div class="music-singer" ref="musicSinger">
-			<div class="back"><i class="icon-back"></i></div>
+		<div class="back-box">
+			<div class="back" @click="routeBack"><i class="icon-back"></i></div>
 			<div class="singer-name">{{title}}</div>
-			<div class="singer-img" :style="singerPic"></div>
+		</div>
+		
+		<div class="music-singer" ref="musicSinger">
+			<div class="singer-img" :style="singerPic" v-if="this.pic"></div>
 			<div class="singer-filter"></div>
-			<div class="play-wrapper">
+			<div class="play-wrapper" v-show="songs.length > 0">
 				<div class="play" style=""><i class="icon-play"></i> <span class="text">随机播放全部</span></div>
 			</div>
 		</div>
@@ -15,9 +18,9 @@
 		<div class="lazyer" ref="lazyer">
 			
 		</div>
-		<scroll-view :listenScroll="listenScroll" :probeType="probeType" @getScrollJs="getScroll" class="music-list-box" :data="songs">
+		<scroll-view :listenScroll="listenScroll" :probeType="probeType" @getScrollJs="getScroll" class="music-list-box" :data="songs" v-if="songs != ''">
 			<div>
-				<song-list :songs="songs"></song-list>
+				<song-list :songs="songs" @select="selectSong"></song-list>
 			</div>
 		</scroll-view>
 	</div>
@@ -27,6 +30,7 @@
 	import scrollView from 'base/scroll/scroll'
 	import songList from 'base/song-list/song-list'
 	import loading from 'base/loading/loading'
+	import {mapActions} from 'vuex'
 	export default{
 		props:{
 			songs:{
@@ -60,7 +64,6 @@
 			}
 		},
 		created(){
-			
 			this.listenScroll = true;
 			this.probeType = 3;
 		},
@@ -75,20 +78,33 @@
 			},
 			initLazyerHeight(scrollY){
 				let height = -scrollY;
-				let backHeight = this.$refs.musicSinger.getElementsByClassName('back')[0].clientHeight;
+				let musicSinger = this.$refs.musicSinger;
+				let backHeight = document.getElementsByClassName('back')[0].clientHeight;
 				let maxHeight = -this.musicSingerHeight + backHeight;
 				if(height < maxHeight){
 					height = maxHeight;
-					let index = 99;
-					this.$refs.musicSinger.style.height = backHeight + 'px';
-					this.$refs.musicSinger.style.zIndex = index;
+					musicSinger.style.height = backHeight + 'px';
+					musicSinger.style.zIndex = 99;
 				}else{
-					this.$refs.musicSinger.style.height = this.musicSingerHeight + 'px';
-					this.$refs.musicSinger.style.zIndex = 0;
+					musicSinger.style.height = this.musicSingerHeight + 'px';
+					musicSinger.style.zIndex = 0;
 				}
-				
+				if(height > 0){
+					let scale = (height + this.musicSingerHeight ) / this.musicSingerHeight
+					musicSinger.style['transform'] = `scale(${scale})`
+				}
 				this.$refs.lazyer.style['transform'] = `translate3d(0,${height}px,0)`;
-			}
+			},
+			routeBack(){
+				this.$router.back();
+			},
+			selectSong(item,index){
+				let list = this.songs;
+				this.selectPlay({list,index});
+			},
+			...mapActions({
+				selectPlay:'selectPlay',
+			})
 			
 		}
 	}
@@ -209,5 +225,11 @@
 		width: 100%;
 		background: #222;
 		bottom: 0;
+	}
+	.back-box{
+		position: fixed;
+		top: 0;
+		width: 100%;
+		z-index: 100;
 	}
 </style>
