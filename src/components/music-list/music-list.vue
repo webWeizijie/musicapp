@@ -8,7 +8,7 @@
 		<div class="music-singer" ref="musicSinger">
 			<div class="singer-img" :style="singerPic" v-if="this.pic"></div>
 			<div class="singer-filter"></div>
-			<div class="play-wrapper" v-show="songs.length > 0">
+			<div class="play-wrapper" v-show="songs.length > 0" @click="random">
 				<div class="play" style=""><i class="icon-play"></i> <span class="text">随机播放全部</span></div>
 			</div>
 		</div>
@@ -102,8 +102,14 @@
 				let list = this.songs;
 				this.selectPlay({list,index});
 			},
+			random(){
+				this.randomPlay({
+					list:this.songs
+				})
+			},
 			...mapActions({
 				selectPlay:'selectPlay',
+				randomPlay:'randomPlay'
 			})
 			
 		}

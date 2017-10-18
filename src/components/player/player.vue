@@ -18,16 +18,18 @@
 				<div class="bottom">
 					<div class="song-progress">
 						<div class="songl">{{format(currentTime)}}</div>
-						<div class="progress" ref="progress">
-							<div class="progress-cont" :style="`width:${currentProgress}px`"></div>
-							<div class="progress-btn-wapper" @touchstart="progressStart" @touchmove="progressMove" @touchend="progressEnd" :style="`transform:translate3d(${currentProgress}px,0,0)`">
-								<div class="progress-btn"></div>
+						<div class="progress-box" ref="progressBox" @touchstart="progressClick">
+							<div class="progress" ref="progress">
+								<div class="progress-cont" :style="`width:${currentProgress}px`"></div>
+								<div class="progress-btn-wapper" @touchstart="progressStart" @touchmove="progressMove" @touchend="progressEnd" :style="`transform:translate3d(${currentProgress}px,0,0)`">
+									<div class="progress-btn"></div>
+								</div>
 							</div>
 						</div>
 						<div class="songr">{{format(currentSong.duration)}}</div>
 					</div>
 					<div class="operators">
-						<div class="icon i-left"><i class="icon-sequence"></i></div>
+						<div class="icon i-left" @click="changeMode"><i :class="iconMode"></i></div>
 						<div class="icon i-left" @click="songPre" :class="{'disable':!songReady}"><i class="icon-prev"></i></div>
 						<div class="icon i-center" @click="changePlaying" :class="{'disable':!songReady}"><i :class="playing?'icon-pause':'icon-play'"></i></div>
 						<div class="icon i-right" @click="songNext" :class="{'disable':!songReady}"><i class="icon-next"></i></div>
@@ -57,13 +59,15 @@
 				<div class="control list-icon"><i class="icon-playlist"></i></div>
 			</div>
 		</transition>
-		<audio ref="audio" :src="currentSong.url" @canplay="audioReady" @error="audioError" @timeupdate="updateTime" @ended="songNext"></audio>
+		<audio ref="audio" :src="currentSong.url" @canplay="audioReady" @error="audioError" @timeupdate="updateTime" @ended="end"></audio>
 	</div>
 </template>
 
 <script>
 	import { mapGetters, mapMutations } from 'vuex'
 	import animations from 'create-keyframe-animation'
+	import {playMode} from 'common/js/config.js'
+	import {shuffle} from 'common/js/util.js'
 	export default {
 		data(){
 			return{
@@ -71,21 +75,36 @@
 				currentTime:0,
 				currentProgress:0,
 				nowModify:false,
+				
 			}
 		},
 		computed: {
+			iconMode(){
+				return this.mode === playMode.sequence?'icon-sequence': this.mode === playMode.loop? 'icon-loop':'icon-random'
+			},
 			...mapGetters({
 				playlist: 'playlist',
 				fullScreen: 'fullScreen',
 				currentSong: 'currentSong',
 				playing: 'playing',
-				currentIndex:'currentIndex'
+				currentIndex:'currentIndex',
+				mode:'mode',
+				sequenceList:'sequenceList'
 			})
 		},
 		created() {
 			
 		},
 		methods: {
+			progressClick(e){
+				let progressBox = this.$refs.progressBox
+				let paddleft = (window.innerWidth - progressBox.clientWidth + 12) / 2;
+				let disX = e.touches[0].clientX;
+				
+				
+				this.$refs.audio.currentTime = (disX - paddleft) / this.progressWidth * this.currentSong.duration;
+				console.log(disX - paddleft)
+			},
 			back() {
 				this.setFullScreen(false);
 			},
@@ -95,7 +114,6 @@
 			},
 			changePlaying() {
 				this.setPlayingState(!this.playing);
-				
 			},
 			enter(el, done) {
 				const {
@@ -224,24 +242,58 @@
 				}else if(res > this.progressWidth){
 					res = this.progressWidth;
 				}
-				console.log(res)
+				
 				this.currentProgress = res;
 			},
 			progressEnd(){
 				this.$refs.audio.currentTime = this.currentProgress / this.progressWidth * this.currentSong.duration;
 				this.nowModify = false;
 			},
+			end(){
+				console.log(this.mode)
+				if(this.mode == playMode.loop){
+					this.loop();
+				}else{
+					this.songNext();
+				}
+			},
+			loop(){
+				this.$refs.audio.currentTime = 0;
+				this.$refs.audio.play()
+			
+			},
+			changeMode(){
+				const mode = (this.mode + 1)%3;
+				this.setPlayMode(mode);
+				let list = this.sequenceList;
+				if(mode == playMode.random){
+					list = shuffle(list)
+				}		
+				this.resetCurrentIndex(list)
+				this.setPlayList(list);
+			},
+			resetCurrentIndex(list){
+				let index = list.findIndex((item)=>{
+					return item.id === this.currentSong.id
+				})
+				this.setCurrentIndex(index);
+			},
 			...mapMutations({
 				setFullScreen: 'SET_FULL_SCREEN',
 				setPlayingState: 'SET_PLAYING_STATE',
-				setCurrentIndex:'SET_CURRENT_INDEX'
+				setCurrentIndex:'SET_CURRENT_INDEX',
+				setPlayMode:'SET_PLAY_MODE',
+				setPlayList:'SET_PLAYLIST'
 			})
 		},
 		mounted(){
 			
 		},
 		watch:{
-			currentSong(){
+			currentSong(newSong,oldSong){
+				if(newSong.id === oldSong.id){
+					return
+				}
 				this.$nextTick(()=>{
 					this.$refs.audio.play()
 					
@@ -303,7 +355,7 @@
 		position: relative;
 		text-align: center;
 		padding-top: 1px;
-		height: 1.26rem;
+		height: 1.28rem;
 	}
 	
 	.player-title .back {
@@ -358,7 +410,7 @@
 	.middle .middlel .cd-wrapper .cd {
 		width: 4.88rem;
 		height: 4.88rem;
-		border: 0.19rem solid hsla(0, 0%, 100%, .1);
+		border: 0.17rem solid hsla(0, 0%, 100%, .1);
 		border-radius: 50%;
 		box-sizing: border-box;
 		animation: rotate 20s linear infinite;
@@ -549,7 +601,7 @@
 		justify-content: center;
 		align-items: center;
 		font-size:0.19rem;
-		padding-bottom: 0.3rem;
+		padding-bottom: 0.17rem;
 	}
 	.song-progress .songl{
 		margin-right: 0.1rem;
@@ -559,7 +611,7 @@
 	}
 	.song-progress .progress{
 		position: relative;
-		width: 3.85rem;
+		width: 3.9rem;
 		background: rgba(0,0,0,.3);
 		height: 4px;
 	}
@@ -587,5 +639,8 @@
 	    border: 3px solid #fff;
 	    border-radius: 50%;
 	    background: #ffcd32;
+	}
+	.progress-box{
+		padding: 0.2rem 0;
 	}
 </style>
