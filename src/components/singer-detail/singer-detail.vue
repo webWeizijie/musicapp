@@ -33,7 +33,6 @@
 				jsonp: getMusic.jsonp
 			}).then((res) => {
 				this.songs = this._normalSongs(res.body.data.list);
-				console.log(this.songs)
 			})
 		},
 		methods: {

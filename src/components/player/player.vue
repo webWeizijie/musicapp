@@ -68,6 +68,7 @@
 	import animations from 'create-keyframe-animation'
 	import {playMode} from 'common/js/config.js'
 	import {shuffle} from 'common/js/util.js'
+	import Lyric from 'lyric-parser'
 	export default {
 		data(){
 			return{
@@ -75,7 +76,8 @@
 				currentTime:0,
 				currentProgress:0,
 				nowModify:false,
-				
+				playingLyric:null,
+				currentLineNum:0,
 			}
 		},
 		computed: {
@@ -278,6 +280,16 @@
 				})
 				this.setCurrentIndex(index);
 			},
+			getLyric(lyricData){
+				this.playingLyric = new Lyric(lyricData,this.hundleLyric);
+				if(this.playing){
+					this.currentLyric.play();
+				}
+				console.log(this.playingLyric)
+			},
+			hundleLyric({lineNum,txt}){
+				
+			},
 			...mapMutations({
 				setFullScreen: 'SET_FULL_SCREEN',
 				setPlayingState: 'SET_PLAYING_STATE',
@@ -295,8 +307,10 @@
 					return
 				}
 				this.$nextTick(()=>{
-					this.$refs.audio.play()
-					
+					this.$refs.audio.play();
+					this.currentSong.getLyricData(this).then((lyricData)=>{
+						this.getLyric(lyricData);
+					});
 				})
 			},
 			playing(newPlaying){
