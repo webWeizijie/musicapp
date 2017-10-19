@@ -64,7 +64,7 @@
 				this.scrollView && this.scrollView.scrollTo.apply(this.scrollView,arguments);
 			},
 			scrollToElement(){	
-				this.scrollView && this.scrollView.scrollElement.apply(this.scrollView,arguments);
+				this.scrollView && this.scrollView.scrollToElement.apply(this.scrollView,arguments);
 			}
 			
 		},
