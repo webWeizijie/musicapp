@@ -524,7 +524,7 @@
 	.middle {
 		width: 100%;
 		top: 1.28rem;
-		bottom: 3.4rem;
+		bottom: 2.9rem;
 		position: fixed;
 	}
 	
@@ -573,7 +573,8 @@
 	
 	.player .bottom {
 		position: absolute;
-		bottom: 0.77rem;
+		/*bottom: 0.77rem;*/
+		bottom:40px;
 		width: 100%;
 	}
 	
@@ -855,7 +856,7 @@
 	}
 	.playing-lyric-wrapper{
 	    width: 80%;
-	    margin: 0.5rem auto 0;
+	    margin: 0.3rem auto 0;
 	    overflow: hidden;
 	    text-align: center;
 	}

@@ -110,9 +110,9 @@
 				})
 			},
 			handlePlaylist(playlist){
-				if(playlist.length > 0){
+				if(playlist.length > 0 && this.songs != ''){
 					setTimeout(()=>{
-						let a = this.$refs.list.$el.style.bottom = this.minPlayerHeight+ 'px';
+						this.$refs.list.$el.style.bottom = this.minPlayerHeight+ 'px';
 						this.$refs.list.refresh();
 					},20)
 				}
@@ -122,6 +122,11 @@
 				randomPlay:'randomPlay'
 			})
 			
+		},
+		watch:{
+			songs(){
+				this.handlePlaylist(this.playlist)
+			}
 		}
 	}
 </script>

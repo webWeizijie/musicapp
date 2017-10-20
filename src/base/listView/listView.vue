@@ -28,8 +28,10 @@
 <script>
 	import scrollView from 'base/scroll/scroll'
 	import {getData} from 'common/js/dom.js'
+	import {playlistMixin} from 'common/js/mixin'
 	
 	export default {
+		mixins:[playlistMixin],
 		created(){
 			this.firstDisY = 0;
 			this.lastDisY=0;
@@ -113,6 +115,16 @@
 			},
 			selectSinger(item){
 				this.$emit('select',item);
+			},
+			handlePlaylist(playlist){
+				if(playlist.length > 0){
+					setTimeout(()=>{
+						//console.log(this.$refs.scroll)
+						let a = this.$refs.scroll.$el.style.bottom = this.minPlayerHeight+ 'px';
+						this.$refs.scroll.refresh();
+						
+					},20)
+				}
 			}
 		},
 		mounted() {
