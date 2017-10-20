@@ -44,9 +44,11 @@
 	import vueResource from 'vue-resource'
 	import axios from 'axios'
 	import scrollView from 'base/scroll/scroll'
+	import {playlistMixin} from 'common/js/mixin'
 	Vue.use(vueResource);
 
 	export default {
+		mixins:[playlistMixin],
 		data() {
 			return {
 				recommend: null,
@@ -92,6 +94,15 @@
 						this.$refs.recommendBox.refresh();
 					},20)
 					this.cheackLoad = true;
+				}
+			},
+			handlePlaylist(playlist){
+				console.log(playlist)
+				if(playlist.length > 0){
+					setTimeout(()=>{
+						let a = this.$refs.recommendBox.$el.style.bottom = this.minPlayerHeight+ 'px';
+						this.$refs.recommendBox.refresh();
+					},20)
 				}
 			}
 		},

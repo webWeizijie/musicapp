@@ -13,6 +13,9 @@
 						<div class="cd-wrapper" ref="cdWrapper">
 							<div class="cd" :class="playing?'play':'paused'"><img class="image" :src="currentSong.image"></div>
 						</div>
+						<div class="playing-lyric-wrapper" v-if="playingLyricText != ''">
+							<div class="playing-lyric">{{playingLyricText}}</div>
+						</div>
 					</div>
 					<scroll-view v-if="playingLyric  && playingLyric" class="middle-r" :data="playingLyric.lines" ref="lyricBox">
 						<div class="lyric-wrapper">
@@ -50,7 +53,7 @@
 			</div>
 		</transition>
 		<transition name="mini">
-			<div class="min-player" v-show="!fullScreen" @click="open">
+			<div class="min-player" v-show="!fullScreen" @click="open" ref="minPlayer">
 				<div class="min-player-img" :class="playing?'play':'paused'" ref="minPlayerImg">
 					<img class="image" :src="currentSong.image">
 				</div>
@@ -90,7 +93,8 @@
 				nowModify: false,
 				playingLyric: null,
 				currentLineNum: 0,
-				currentShow:'cd'
+				currentShow:'cd',
+				playingLyricText:''
 			}
 		},
 		computed: {
@@ -104,7 +108,8 @@
 				playing: 'playing',
 				currentIndex: 'currentIndex',
 				mode: 'mode',
-				sequenceList: 'sequenceList'
+				sequenceList: 'sequenceList',
+				minPlayerHeight:'minPlayerHeight'
 			})
 		},
 		created() {
@@ -115,8 +120,11 @@
 				let progressBox = this.$refs.progressBox
 				let paddleft = (window.innerWidth - progressBox.clientWidth + 12) / 2;
 				let disX = e.touches[0].clientX;
-
-				this.$refs.audio.currentTime = (disX - paddleft) / this.progressWidth * this.currentSong.duration;
+				let currentTime = (disX - paddleft) / this.progressWidth * this.currentSong.duration;
+				this.$refs.audio.currentTime = currentTime;
+				if(this.playingLyric){
+					this.playingLyric.seek(currentTime * 1000)
+				}
 			},
 			back() {
 				this.setFullScreen(false);
@@ -126,7 +134,11 @@
 				this._getPosAndScale()
 			},
 			changePlaying() {
+				
 				this.setPlayingState(!this.playing);
+				if(this.playingLyric){
+					this.playingLyric.togglePlay();
+				}
 			},
 			enter(el, done) {
 				const {
@@ -198,23 +210,33 @@
 				if(!this.songReady) {
 					return
 				}
-				this.songReady = false;
-				let index = this.currentIndex == 0 ? this.playlist.length - 1 : this.currentIndex - 1
-				this.setCurrentIndex(index);
-				if(!this.playing) {
-					this.changePlaying();
+				if(this.playlist.length == 0){
+					this.loop();
+				}else{
+					this.songReady = false;
+					let index = this.currentIndex == 0 ? this.playlist.length - 1 : this.currentIndex - 1
+					this.setCurrentIndex(index);
+					if(!this.playing) {
+						this.changePlaying();
+					}
 				}
+				
 			},
 			songNext() {
 				if(!this.songReady) {
 					return
 				}
-				this.songReady = false;
-				let index = this.currentIndex == this.playlist.length - 1 ? 0 : this.currentIndex + 1
-				this.setCurrentIndex(index);
-				if(!this.playing) {
-					this.changePlaying();
+				if(this.playlist.length == 0){
+					this.loop();
+				}else{
+					this.songReady = false;
+					let index = this.currentIndex == this.playlist.length - 1 ? 0 : this.currentIndex + 1
+					this.setCurrentIndex(index);
+					if(!this.playing) {
+						this.changePlaying();
+					}
 				}
+				
 			},
 			audioReady() {
 				this.songReady = true;
@@ -259,7 +281,11 @@
 				this.currentProgress = res;
 			},
 			progressEnd() {
-				this.$refs.audio.currentTime = this.currentProgress / this.progressWidth * this.currentSong.duration;
+				let currentTime = this.currentProgress / this.progressWidth * this.currentSong.duration;
+				this.$refs.audio.currentTime = currentTime;
+				if(this.playingLyric){
+					this.playingLyric.seek(currentTime * 1000)
+				}
 				this.nowModify = false;
 			},
 			end() {
@@ -272,6 +298,9 @@
 			loop() {
 				this.$refs.audio.currentTime = 0;
 				this.$refs.audio.play()
+				if(this.playingLyric){
+					this.playingLyric.seek(0);
+				}
 
 			},
 			changeMode() {
@@ -301,7 +330,7 @@
 				txt
 			}) {
 				this.currentLineNum = lineNum;
-				console.log(lineNum)
+				//console.log(lineNum)
 				if(lineNum > 5) {
 					let linEl = this.$refs.lyricLine[lineNum - 5];
 
@@ -309,6 +338,7 @@
 				} else {
 					this.$refs.lyricBox.scrollTo(0, 0, 1000);
 				}
+				this.playingLyricText = txt;
 			},
 			middleTouchStart(e){
 				this.touch.initiated = true;
@@ -329,7 +359,6 @@
 				
 				const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
 				const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
-				
 				this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
 				this.$refs.lyricBox.$el.style['transform'] = `translate3d(${offsetWidth}px,0,0)`
 				this.$refs.lyricBox.$el.style['transitionDuration'] = 0;
@@ -369,32 +398,46 @@
 				setPlayingState: 'SET_PLAYING_STATE',
 				setCurrentIndex: 'SET_CURRENT_INDEX',
 				setPlayMode: 'SET_PLAY_MODE',
-				setPlayList: 'SET_PLAYLIST'
+				setPlayList: 'SET_PLAYLIST',
+				setMinPlayerHeight:'setMinPlayerHeight'
 			})
 		},
 		mounted() {
 
 		},
 		watch: {
+			fullScreen(newSong){
+				if(!newSong){
+					setTimeout(()=>{
+						let minplayerHeight = this.$refs.minPlayer.clientHeight;
+						this.setMinPlayerHeight(minplayerHeight)
+					},20)
+				}
+			},
 			currentSong(newSong, oldSong) {
 				if(newSong.id === oldSong.id) {
 					return
 				}
-				this.$nextTick(() => {
+				if(this.playingLyric){
+					this.playingLyric.stop();
+				}
+				setTimeout(() => {
 					this.$refs.audio.play();
 					this.currentSong.getLyricData(this).then((lyricData) => {
 						this.getLyric(lyricData);
+					}).catch(()=>{
+						this.playingLyric = null;
+						this.playingLyricText = '';
+						this.currentLineNum = 0;
 					});
-				})
+				},1000)
 			},
 			playing(newPlaying) {
 				let audio = this.$refs.audio;
 				let lyric = this.playingLyric
 				this.$nextTick(() => {
 					newPlaying ? audio.play() : audio.pause();
-					newPlaying ? lyric.play() : lyric.stop();
 				})
-				
 			},
 			currentTime() {
 				let width = this.$refs.progress.clientWidth;
@@ -809,5 +852,17 @@
 		width: 20px;
 		border-radius: 5px;
 		background: rgba(255, 255, 255, 0.8);
+	}
+	.playing-lyric-wrapper{
+	    width: 80%;
+	    margin: 0.5rem auto 0;
+	    overflow: hidden;
+	    text-align: center;
+	}
+	.playing-lyric-wrapper .playing-lyric {
+	    height: 20px;
+	    line-height: 20px;
+	    font-size: 14px;
+	    color: hsla(0,0%,100%,.5);
 	}
 </style>

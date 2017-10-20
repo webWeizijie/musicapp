@@ -18,7 +18,7 @@
 		<div class="lazyer" ref="lazyer">
 			
 		</div>
-		<scroll-view :listenScroll="listenScroll" :probeType="probeType" @getScrollJs="getScroll" class="music-list-box" :data="songs" v-if="songs != ''">
+		<scroll-view :listenScroll="listenScroll" :probeType="probeType" @getScrollJs="getScroll" class="music-list-box" :data="songs" v-if="songs != ''" ref="list">
 			<div>
 				<song-list :songs="songs" @select="selectSong"></song-list>
 			</div>
@@ -31,7 +31,9 @@
 	import songList from 'base/song-list/song-list'
 	import loading from 'base/loading/loading'
 	import {mapActions} from 'vuex'
+	import {playlistMixin} from 'common/js/mixin'
 	export default{
+		mixins:[playlistMixin],
 		props:{
 			songs:{
 				type:Array,
@@ -106,6 +108,14 @@
 				this.randomPlay({
 					list:this.songs
 				})
+			},
+			handlePlaylist(playlist){
+				if(playlist.length > 0){
+					setTimeout(()=>{
+						let a = this.$refs.list.$el.style.bottom = this.minPlayerHeight+ 'px';
+						this.$refs.list.refresh();
+					},20)
+				}
 			},
 			...mapActions({
 				selectPlay:'selectPlay',

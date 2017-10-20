@@ -3,7 +3,7 @@
 		<div class="loading-box">
 			<loading v-show="singerList == ''"></loading>
 		</div>
-		<list-view :data="singerList" v-if="singerList != ''" class="singer-box" @select="selectSinger"></list-view>
+		<list-view :data="singerList" v-if="singerList != ''" class="singer-box" @select="selectSinger" ref="singerList"></list-view>
 		<router-view></router-view>
 	</div>
 </template>
@@ -16,11 +16,13 @@
 	import listView from 'base/listView/listView'
 	import loading from 'base/loading/loading'
 	import { mapMutations } from 'vuex'
+	import {playlistMixin} from 'common/js/mixin'
 	
 	
 	let HOT_NAME = '热门';
 	let HOT_LENGTH = 10;
 	export default {
+		mixins:[playlistMixin],
 		data() {
 			return {
 				singerList: [],
@@ -87,6 +89,16 @@
 				})
 				this.getMusic(singer);
 			},
+			handlePlaylist(playlist){
+				if(playlist.length > 0){
+					setTimeout(()=>{
+						console.log(this.$refs.singerList)
+						let a = this.$refs.singerList.$el.style.bottom = this.minPlayerHeight+ 'px';
+						this.$refs.singerList.$refs.scroll.refresh();
+						
+					},20)
+				}
+			},
 			...mapMutations({
 				getMusic:'GET_MUSIC',
 			})
@@ -113,7 +125,7 @@
 		width: 100%;
 	    position: absolute;
 	    top: 0;
-	    height: 100%;
+	    bottom:0;
 	    overflow: hidden;
 	   
 	}
