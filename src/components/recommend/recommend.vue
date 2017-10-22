@@ -1,38 +1,43 @@
 <template>
-	<scroll-view class="recommend-box" ref="recommendBox" :data="discList">
-		<div>
-			<div class="banner-swiper" v-if="recommend">
-				<slider>
-					<div v-for="item in recommend.slider">
-						<a :href="item.linkUrl">
-							<img @load="imgLoad" :src="item.picUrl" alt=""/>
-						</a>
+	<div>
+		<scroll-view class="recommend-box" ref="recommendBox" :data="discList">
+			<div>
+				<div class="banner-swiper" v-if="recommend">
+					<slider>
+						<div v-for="item in recommend.slider">
+							<a :href="item.linkUrl">
+								<img @load="imgLoad" :src="item.picUrl" alt=""/>
+							</a>
+						</div>
+					</slider>
+				</div>
+				<div class="recommend-list">
+					<div class="recommend-list-title">
+						热门歌单推荐
 					</div>
-				</slider>
-			</div>
-			<div class="recommend-list">
-				<div class="recommend-list-title">
-					热门歌单推荐
-				</div>
-				<div class="recommend-loading" v-show="!discList.length">
-					<loading></loading>
-				</div>
-				<div>
-					<ul>
-						<li v-for="item in discList">
-							<div class="recommend-img"><a href="https://www.baidu.com"><img v-lazy="item.imgurl"/></a></div>
-							<div class="recommend-cont">
-								<div class="recommend-cont-info">
-									<h2>{{item.creator.name}}</h2>
-									<p>{{item.dissname}}</p>	
+					<div class="recommend-loading" v-show="!discList.length">
+						<loading></loading>
+					</div>
+					<div>
+						<ul>
+							<li @click="selectIndex(item)" v-for="item in discList">
+								<div class="recommend-img"><img v-lazy="item.imgurl"/></div>
+								<div class="recommend-cont">
+									<div class="recommend-cont-info">
+										<h2>{{item.creator.name}}</h2>
+										<p>{{item.dissname}}</p>	
+									</div>
 								</div>
-							</div>
-						</li>
-					</ul>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
-		</div>
-	</scroll-view>
+		</scroll-view>
+		<transition name="translate">
+			<router-view></router-view>
+		</transition>
+	</div>
 </template>
 
 <script>
@@ -45,6 +50,7 @@
 	import axios from 'axios'
 	import scrollView from 'base/scroll/scroll'
 	import {playlistMixin} from 'common/js/mixin'
+	import {mapMutations,mapGetters} from 'vuex'
 	Vue.use(vueResource);
 
 	export default {
@@ -77,6 +83,7 @@
 					if(res.body.code == ERR_OK) {
 						setTimeout(()=>{
 							this.discList = res.body.data.list;	
+							//console.log(this.discList)
 						})
 						
 					}
@@ -97,26 +104,48 @@
 				}
 			},
 			handlePlaylist(playlist){
-				console.log(playlist)
 				if(playlist.length > 0){
 					setTimeout(()=>{
 						let a = this.$refs.recommendBox.$el.style.bottom = this.minPlayerHeight+ 'px';
 						this.$refs.recommendBox.refresh();
 					},20)
+				}else if(playlist.length == 0){
+						this.$refs.recommendBox.$el.style.bottom = 0;
+						this.$refs.recommendBox.refresh();
 				}
-			}
+			},
+			selectIndex(item){
+				this.$router.push({
+					path:`/recommend/${item.dissid}`
+				})
+				this.setDisc(item);
+				
+			},
+			...mapMutations({
+				setDisc:'SET_DISC'
+			})
 		},
 		components: {
 			slider,
 			scrollView,
 			loading
+		},
+		computed:{
+			...mapGetters({
+				disc:'disc'
+			})
 		}
+		
 	}
 </script>
 
 <style>
 	.recommend-box {
 		overflow: hidden;
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+		top: 0;
 	}
 	
 	.banner-swiper {
@@ -181,5 +210,15 @@
 		transform: translateY(100%);
 		left: 0;
 		z-index: 9;
+	}
+	.translate-enter-active,
+	.translate-leave-active {
+		transition: all 0.3s ease;
+	}
+	
+	.translate-enter,
+	.translate-leave-to {
+		transform: translateX(100%);
+		opacity: 0;
 	}
 </style>

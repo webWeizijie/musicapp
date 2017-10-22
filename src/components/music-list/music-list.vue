@@ -20,7 +20,7 @@
 		</div>
 		<scroll-view :listenScroll="listenScroll" :probeType="probeType" @getScrollJs="getScroll" class="music-list-box" :data="songs" v-if="songs != ''" ref="list">
 			<div>
-				<song-list :songs="songs" @select="selectSong"></song-list>
+				<song-list :songs="songs" @select="selectSong" :rankingState="rankingState"></song-list>
 			</div>
 		</scroll-view>
 	</div>
@@ -32,6 +32,7 @@
 	import loading from 'base/loading/loading'
 	import {mapActions} from 'vuex'
 	import {playlistMixin} from 'common/js/mixin'
+
 	export default{
 		mixins:[playlistMixin],
 		props:{
@@ -48,6 +49,10 @@
 			pic:{
 				type:String,
 				default:''
+			},
+			rankingState:{
+				type:Boolean,
+				default:false,
 			}
 		},
 		data(){
@@ -62,7 +67,7 @@
 		},
 		computed:{
 			singerPic(){
-				return `background-image: url(http://y.gtimg.cn/music/photo_new/T001R300x300M000${this.pic}.jpg?max_age=2592000)`
+				return `background-image: url(${this.pic})`
 			}
 		},
 		created(){
@@ -115,6 +120,11 @@
 						this.$refs.list.$el.style.bottom = this.minPlayerHeight+ 'px';
 						this.$refs.list.refresh();
 					},20)
+				}else if(playlist.length == 0 && this.songs != ''){
+					setTimeout(()=>{
+						this.$refs.list.$el.style.bottom = 0;
+						this.$refs.list.refresh();
+					},20)	
 				}
 			},
 			...mapActions({
@@ -179,12 +189,16 @@
 	.singer-name {
 		position: absolute;
 		top: 0;
-		width: 100%;
+		width: 76%;
 		padding-top: 0.19rem;
 		color: #ffffff;
 		font-size: 0.29rem;
 		z-index: 10;
 		text-align: center;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		left: 12%;
 	}
 	
 	.play-wrapper {

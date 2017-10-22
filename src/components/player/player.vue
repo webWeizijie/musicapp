@@ -70,7 +70,7 @@
 						<i class="icon-mini" :class="playing?'icon-pause-mini':'icon-add'"></i>
 					</div>
 				</div>
-				<div class="control list-icon"><i class="icon-playlist"></i></div>
+				<div class="control list-icon" @click.stop="clearPlayList"><i class="icon-playlist"></i></div>
 			</div>
 		</transition>
 		<audio ref="audio" :src="currentSong.url" @canplay="audioReady" @error="audioError" @timeupdate="updateTime" @ended="end"></audio>
@@ -393,6 +393,9 @@
 				this.$refs.middlel.style.opacity = opacity;
 				this.$refs.middlel.style['transitionDuration'] = `${time}ms`;
 			},
+			clearPlayList(){
+				this.setPlayList([])
+			},
 			...mapMutations({
 				setFullScreen: 'SET_FULL_SCREEN',
 				setPlayingState: 'SET_PLAYING_STATE',
@@ -403,7 +406,7 @@
 			})
 		},
 		mounted() {
-
+			
 		},
 		watch: {
 			fullScreen(newSong){
@@ -421,6 +424,9 @@
 				if(this.playingLyric){
 					this.playingLyric.stop();
 				}
+				this.currentTime = 0;
+				this.currentProgress = 0;
+				
 				setTimeout(() => {
 					this.$refs.audio.play();
 					this.currentSong.getLyricData(this).then((lyricData) => {
@@ -448,6 +454,8 @@
 				if(!this.nowModify) {
 					if(currentProgress > this.progressWidth) {
 						currentProgress = this.progressWidth;
+					}else if(this.currentTime == 0){
+						currentProgress = 0;
 					}
 					this.currentProgress = currentProgress
 				}

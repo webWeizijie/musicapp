@@ -7,7 +7,9 @@ const state = {
 	sequenceList:[],//播放列表
 	mode:playMode.sequence,//播放模式
 	currentIndex:-1,//当前第几个在播放
-	minPlayerHeight:0
+	minPlayerHeight:0,
+	disc:{},
+	ranking:{}
 }
 
 export default state

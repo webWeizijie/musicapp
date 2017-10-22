@@ -25,6 +25,12 @@ const mutations = {
 	},
 	setMinPlayerHeight(state,height){
 		state.minPlayerHeight = height;
+	},
+	[types.SET_DISC](state,disc){
+		state.disc = disc;
+	},
+	[types.SET_RANKING](state,ranking){
+		state.ranking = ranking;
 	}
 }
 

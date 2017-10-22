@@ -124,6 +124,9 @@
 						this.$refs.scroll.refresh();
 						
 					},20)
+				}else if(playlist.length == 0){
+						this.$refs.scroll.$el.style.bottom = 0;
+						this.$refs.scroll.refresh();
 				}
 			}
 		},

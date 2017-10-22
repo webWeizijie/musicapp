@@ -1,4 +1,4 @@
-import { commonParams,options } from './config.js'
+import {commonParams,options} from './config.js'
 
 export const getRecommend = {
 	 url : 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg',
@@ -21,6 +21,23 @@ export const getDiscList = {
 		categoryId:10000000,
 		rnd:Math.random(),
 		format:'json',
+	}),
+	jsonp:options.jsonp,
+}
+
+export const getDiscData = {
+	url : '/api/disc',
+	 params : Object.assign({}, commonParams, {
+	 	g_tk:67232076,
+		type:1,
+		json:1,
+		utf8:1,
+		onlysong:0,
+		loginUin:0,
+		hostUin:0,
+		format:'jsonp',
+		platform:'yqq',
+		needNewCode:0
 	}),
 	jsonp:options.jsonp,
 }

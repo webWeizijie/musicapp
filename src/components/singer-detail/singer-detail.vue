@@ -1,6 +1,6 @@
 <template>
 	<transition name="translate">
-		<music-list :pic="singer.id" :title="singer.name" :songs="songs" ></music-list>
+		<music-list :pic="pic" :title="singer.name" :songs="songs"></music-list>
 	</transition>
 </template>
 
@@ -53,6 +53,9 @@
 			}
 		},
 		computed: {
+			pic(){
+				return `http://y.gtimg.cn/music/photo_new/T001R300x300M000${this.singer.id}.jpg?max_age=2592000`
+			},
 			...mapGetters({
 				singer: 'singer',
 			}),
