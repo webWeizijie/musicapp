@@ -1,6 +1,5 @@
 <template>
 	<div ref="scrollView">
-		
 		<slot></slot>
 	</div>
 </template>
@@ -26,6 +25,18 @@
 			listenScroll:{
 				type:Boolean,
 				default:false,
+			},
+			pullup:{
+				type:Boolean,
+				default:false,
+			},
+			beforeScroll:{
+				type:Boolean,
+				default:false,
+			},
+			refreshDelay:{
+				type:Number,
+				default:20
 			}
 		},
 		data(){
@@ -50,11 +61,24 @@
 						this.$emit('getScrollJs',this.scrollY);
 					})
 				}
+				if(this.pullup){
+					this.scrollView.on('scrollEnd',()=>{
+						if(this.scrollView.y <= (this.scrollView.maxScrollY + 50)){
+							this.$emit('scrollToEnd')
+						}
+					})
+				}
+				if(this.beforeScroll){
+					this.scrollView.on('beforeScrollStart', ()=>{
+						this.$emit('beforeScroll')
+					})
+				}
 			},
 			enable(){
 				this.scrollView && this.scrollView.enable();
 			},
 			refresh(){
+				
 				this.scrollView && this.scrollView.refresh();
 			},
 			disable(){
@@ -65,14 +89,14 @@
 			},
 			scrollToElement(){	
 				this.scrollView && this.scrollView.scrollToElement.apply(this.scrollView,arguments);
-			}
+			},
 			
 		},
 		watch:{
 			data(){
 				setTimeout(()=>{
-					this.refresh()
-				},20)
+					this.refresh();
+				},this.refreshDelay)
 			}
 		}
 	}

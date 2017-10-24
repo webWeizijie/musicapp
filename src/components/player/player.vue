@@ -70,9 +70,10 @@
 						<i class="icon-mini" :class="playing?'icon-pause-mini':'icon-add'"></i>
 					</div>
 				</div>
-				<div class="control list-icon" @click.stop="clearPlayList"><i class="icon-playlist"></i></div>
+				<div class="control list-icon" @click.stop="showPlayList"><i class="icon-playlist"></i></div>
 			</div>
 		</transition>
+		<play-list ref="playList"></play-list>
 		<audio ref="audio" :src="currentSong.url" @canplay="audioReady" @error="audioError" @timeupdate="updateTime" @ended="end"></audio>
 	</div>
 </template>
@@ -84,6 +85,7 @@
 	import { shuffle } from 'common/js/util.js'
 	import Lyric from 'lyric-parser'
 	import scrollView from 'base/scroll/scroll'
+	import playList from 'components/playList/playList'
 	export default {
 		data() {
 			return {
@@ -250,7 +252,6 @@
 			format(interval) {
 				interval = interval | 0;
 				const minute = interval / 60 | 0;
-
 				const second = this._pad(interval % 60);
 				return `${minute}:${second}`
 			},
@@ -393,8 +394,8 @@
 				this.$refs.middlel.style.opacity = opacity;
 				this.$refs.middlel.style['transitionDuration'] = `${time}ms`;
 			},
-			clearPlayList(){
-				this.setPlayList([])
+			showPlayList(){
+				this.$refs.playList.openPlayList();
 			},
 			...mapMutations({
 				setFullScreen: 'SET_FULL_SCREEN',
@@ -463,6 +464,7 @@
 		},
 		components: {
 			scrollView,
+			playList
 		}
 	}
 </script>
@@ -661,7 +663,7 @@
 	.min-player .list-icon {
 		font-size: 0.48rem;
 		color: rgba(255, 205, 49, .5);
-		margin-right: 0.17rem;
+		padding: 0.17rem 0.17rem 0.17rem 0.17rem;
 		height: 0.48rem;
 		width: 0.48rem;
 	}
@@ -705,7 +707,7 @@
 	}
 	
 	.min-playin-icon {
-		margin-right: 0.33rem;
+		padding: 0.16rem;
 		width: 0.5rem;
 		height: 0.5rem;
 	}
@@ -714,6 +716,7 @@
 		width: 0.5rem;
 		height: 0.5rem;
 		position: relative;
+		
 	}
 	
 	.progress-circle svg {

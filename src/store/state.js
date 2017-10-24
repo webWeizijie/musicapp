@@ -1,4 +1,5 @@
 import {playMode} from 'common/js/config.js'
+import {loadSearch} from 'common/js/catch.js'
 const state = {
 	singer:{},
 	playing:false,   //播放状态
@@ -9,7 +10,8 @@ const state = {
 	currentIndex:-1,//当前第几个在播放
 	minPlayerHeight:0,
 	disc:{},
-	ranking:{}
+	ranking:{},
+	searchHistory:loadSearch()
 }
 
 export default state
