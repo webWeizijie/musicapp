@@ -2,7 +2,10 @@
 	<div class="header-box">
 		<div class="header-logo"><img src="../../common/image/logo@3x.png"></div>
 		<div class="header-logo-name">Chicken Music</div>
-		<div class="icon-mine"></div>
+		<router-link to="/user" tag="div">
+			<div class="icon-mine"></div>
+		</router-link>
+		
 	</div>
 </template>
 

@@ -67,3 +67,7 @@ export function setPlayerHistory(song){
 	storage.set(PLAY_HISTORY_KEY,playHistory);
 	return playHistory
 }
+
+export function getPlayerHistory(){
+	return storage.get(PLAY_HISTORY_KEY,[])
+}

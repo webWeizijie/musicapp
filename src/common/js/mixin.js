@@ -74,3 +74,20 @@ export const addSongList = {
 		})
 	}
 }
+
+export const userCenter = {
+	computed:{
+		...mapGetters({
+			searchHistory:'searchHistory',
+			playlist:'playlist'
+		})
+	},
+	methods:{
+		...mapActions({
+			deleteSearchHistory:'deleteSearchHistory',
+			saveSearchHistory:'saveSearchHistory',
+			selectPlay:'selectPlay',
+			insertSong:'insertSong'
+		})
+	}
+}

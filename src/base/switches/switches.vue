@@ -22,6 +22,9 @@
 			switchItem(index) {
 				this.$emit('switch', index)
 			}
+		},
+		mounted(){
+			
 		}
 	}
 </script>
