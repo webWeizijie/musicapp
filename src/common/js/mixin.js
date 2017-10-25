@@ -39,15 +39,38 @@ export const playerMixin = {
 		...mapGetters({
 			mode:'mode',
 			sequenceList:'sequenceList',
-			currentSong:'currentSong'
+			currentSong:'currentSong',
+			playlist:'playlist'
 		})
 	},
 	methods:{
 		...mapMutations({
 			setPlayMode:'SET_PLAY_MODE',
+			setCurrentIndex:'SET_CURRENT_INDEX',
+			setPlayingState:'SET_PLAYING_STATE'
+			
 		}),
 		...mapActions({
-			deleteSong:'deleteSong'
+			deleteSong:'deleteSong',
+			clearAllSongs:'clearAllSongs',
+			
+		})
+	}
+}
+
+export const addSongList = {
+	computed:{
+		...mapGetters({
+			searchHistory:'searchHistory',
+			playHistory:'playHistory'
+		})
+	},
+	methods:{
+		...mapActions({
+			deleteSearchHistory:'deleteSearchHistory',
+			saveSearchHistory:'saveSearchHistory',
+			selectPlay:'selectPlay',
+			insertSong:'insertSong'
 		})
 	}
 }

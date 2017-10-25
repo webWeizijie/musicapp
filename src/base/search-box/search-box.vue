@@ -23,28 +23,29 @@
 			}
 		},
 		methods: {
-		    clear() {
-		      this.query = ''
-		    },
-		    setQuery(query) {
-		      this.query = query
-		    },
-		    blur() {
-		      this.$refs.query.blur()
-		    }
+			clear() {
+				this.query = ''
+			},
+			setQuery(query) {
+				this.query = query
+			},
+			blur() {
+				this.$refs.query.blur()
+			}
 		},
 		created() {
-		    this.$watch('query', debounce((newQuery) => {
-		      this.$emit('query', newQuery)
-		    },200))
+			this.$watch('query', debounce((newQuery) => {
+				this.$emit('query', newQuery)
+			}, 200))
 		}
 	}
 </script>
 
 <style scoped>
 	.search-box-wrapper {
-	    margin: 20px;
+		margin: 20px;
 	}
+	
 	.search-box {
 		display: flex;
 		align-items: center;

@@ -3,20 +3,20 @@
 		<div class="playlist" @click="closePlayList" v-show="flagShow">
 			<div class="list-wrapper" @click.stop>
 				<div class="list-header">
-					<h1 class="title"><i class="icon" :class="iconMode" @click.stop="changeMode"></i> <span class="text">{{modeText}}</span> <span class="clear"><i class="icon-clear"></i></span></h1></div>
+					<h1 class="title"><i class="icon" :class="iconMode" @click.stop="changeMode"></i> <span class="text">{{modeText}}</span><span class="clear" @click="clear"><i class="icon-clear"></i></span></h1></div>
 				<scroll class="list-content" :data="sequenceList" :refreshDelay="refreshDelay" ref="listContent">
 					<transition-group tag="ul" name="list">
-						<li class="item" v-for="item in sequenceList" :key="item.id">
+						<li class="item" v-for="(item,index) in sequenceList" :key="item.id" @click="selectSong(index,item)" ref="songItem">
 							<i class="current" :class="currentNowSong(item)"></i>
 							<span class="text">{{item.name}}</span>
 							<span class="like"><i class="icon-not-favorite"></i></span>
-							<span class="delete" @click="chooseDeleteSong(item)"><i class="icon-delete"></i></span>
+							<span class="delete" @click.stop="chooseDeleteSong(item)"><i class="icon-delete"></i></span>
 						</li>
 					</transition-group>
 				</scroll>
 				<div class="list-operate">
-					<div class="add">
-						<i class="icon-add"></i>
+					<div class="add" @click="openAddsong">
+						<i class="icon-addsong"></i>
 						<span class="text">添加歌曲到队列</span>
 					</div>
 				</div>
@@ -24,7 +24,8 @@
 					<span>关闭</span>
 				</div>
 			</div>
-			<confirm ref="confirm" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+			<confirm ref="confirm" text="是否清空播放列表" confirmBtnText="清空" @confirm="clearSongs"></confirm>
+			<addSong ref="addSong"></addSong>
 		</div>
 	</transition>
 </template>
@@ -34,6 +35,7 @@
 	import Confirm from 'base/confirm/confirm'
 	import {playerMixin} from 'common/js/mixin'
 	import {playMode} from 'common/js/config.js'
+	import addSong from 'components/add-song/add-song'
 	
 	export default {
 		mixins: [playerMixin],
@@ -51,6 +53,7 @@
 		components: {
 			Scroll,
 			Confirm,
+			addSong
 		},
 		methods: {
 			closePlayList() {
@@ -60,7 +63,9 @@
 				this.flagShow = true;
 				setTimeout(() => {
 		          this.$refs.listContent.refresh()
-		        }, 20)
+		          this.scrollToNowSong()
+		        }, 20);
+		        
 			},
 			changeMode(){
 				const mode = (this.mode + 1) % 3;
@@ -75,13 +80,45 @@
 			},
 			chooseDeleteSong(item){
 				this.deleteSong(item)
+			},
+			clear(){
+				this.$refs.confirm.show()
+			},
+			clearSongs(){
+				
+				this.clearAllSongs();
+				
+			},
+			selectSong(index,item){
+				let setCurrentIndex = this.playlist.findIndex((playListItem)=>{
+					return playListItem.id == item.id
+				})
+				this.setCurrentIndex(setCurrentIndex);
+				this.setPlayingState(true);
+				this.scrollToNowSong()
+			},
+			scrollToNowSong(){
+				
+				let songItem = this.$refs.songItem;
+				let index = this.sequenceList.findIndex((item)=>{
+					return item.id == this.currentSong.id
+				})
+				console.log(index)
+				this.$refs.listContent.scrollToElement(songItem[index],200)
+			},
+			openAddsong(){
+				this.$refs.addSong.addSongShow();
 			}
 		},
 		mounted(){
-			console.log(this.sequenceList)
+			
 		},
 		watch:{
-			
+			sequenceList(newValue){
+				if(newValue.length == 0){
+					this.flagShow = false;
+				}
+			}
 		}
 	}
 </script>
@@ -225,7 +262,7 @@
 		color: rgba(255, 255, 255, 0.5);
 	}
 	
-	.icon-add {
+	.icon-addsong {
 		margin-right: 5px;
 		font-size: 12px;
 	}
@@ -274,4 +311,5 @@
 		font-size: 30px;
 		color: rgba(255, 205, 49, .5);
 	}
+	
 </style>

@@ -79,7 +79,7 @@
 </template>
 
 <script>
-	import { mapGetters, mapMutations } from 'vuex'
+	import { mapGetters, mapMutations,mapActions } from 'vuex'
 	import animations from 'create-keyframe-animation'
 	import { playMode } from 'common/js/config.js'
 	import { shuffle } from 'common/js/util.js'
@@ -242,6 +242,7 @@
 			},
 			audioReady() {
 				this.songReady = true;
+				this.setPlayHistory(this.currentSong)
 			},
 			audioError() {
 				this.songReady = true;
@@ -331,7 +332,6 @@
 				txt
 			}) {
 				this.currentLineNum = lineNum;
-				//console.log(lineNum)
 				if(lineNum > 5) {
 					let linEl = this.$refs.lyricLine[lineNum - 5];
 
@@ -404,6 +404,9 @@
 				setPlayMode: 'SET_PLAY_MODE',
 				setPlayList: 'SET_PLAYLIST',
 				setMinPlayerHeight:'setMinPlayerHeight'
+			}),
+			...mapActions({
+				setPlayHistory:'setPlayHistory'
 			})
 		},
 		mounted() {
@@ -419,6 +422,9 @@
 				}
 			},
 			currentSong(newSong, oldSong) {
+				if(!newSong.id){
+					return
+				}
 				if(newSong.id === oldSong.id) {
 					return
 				}
@@ -430,14 +436,17 @@
 				
 				setTimeout(() => {
 					this.$refs.audio.play();
-					this.currentSong.getLyricData(this).then((lyricData) => {
-						this.getLyric(lyricData);
-					}).catch(()=>{
-						this.playingLyric = null;
-						this.playingLyricText = '';
-						this.currentLineNum = 0;
-					});
 				},1000)
+//				if(!this.currentSong.getLyricData){
+//					return
+//				}
+				this.currentSong.getLyricData(this).then((lyricData) => {
+					this.getLyric(lyricData);
+				}).catch(()=>{
+					this.playingLyric = null;
+					this.playingLyricText = '';
+					this.currentLineNum = 0;
+				});
 			},
 			playing(newPlaying) {
 				let audio = this.$refs.audio;
@@ -651,6 +660,10 @@
 	.min-player-info .title {
 		font-size: 0.23rem;
 		color: #ffffff;
+		max-width: 3rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	
 	.min-player-info .singer {
@@ -658,6 +671,10 @@
 		color: #ffffff;
 		color: hsla(0, 0%, 100%, .3);
 		margin-top: 0.14rem;
+		max-width: 3rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	
 	.min-player .list-icon {

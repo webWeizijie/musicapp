@@ -11,7 +11,8 @@ const state = {
 	minPlayerHeight:0,
 	disc:{},
 	ranking:{},
-	searchHistory:loadSearch()
+	searchHistory:loadSearch(),
+	playHistory:[]
 }
 
 export default state

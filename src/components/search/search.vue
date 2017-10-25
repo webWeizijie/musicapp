@@ -93,7 +93,6 @@
 			},
 			clearAll(){
 				this.$refs.confirmBox.show();
-				
 			},
 			clearSearchAll(){
 				this.clearSearchHistory()

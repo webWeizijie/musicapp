@@ -2,31 +2,36 @@
 	<div class="search-history">
 		<h1 class="title"><span class="text">搜索历史</span> <span class="clear" @click="clearSearch"><i class="icon-clear"></i></span></h1>
 		<div class="search-list">
-			<ul>
-				<li class="search-item" v-for="item in searches" @click="selectItem(item)"><span class="text">{{item}}</span> <i class="icon-delete" @click.stop="deleteOne(item)"></i></li>
-			</ul>
+			<transition-group name="list" tag="ul">
+				<li :key="item" class="search-item" @click="selectItem(item)" v-for="item in searches">
+					<span class="text">{{item}}</span>
+					<span class="icon" @click.stop="deleteOne(item)">
+			          <i class="icon-delete"></i>
+			        </span>
+				</li>
+			</transition-group>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		props:{
-			searches:{
-				type:Array,
-				default(){
+		props: {
+			searches: {
+				type: Array,
+				default() {
 					return []
 				}
 			}
 		},
-		methods:{
-			selectItem(item){
-				this.$emit('select',item)
+		methods: {
+			selectItem(item) {
+				this.$emit('select', item)
 			},
-			deleteOne(item){
-				this.$emit('delete',item)
+			deleteOne(item) {
+				this.$emit('delete', item)
 			},
-			clearSearch(){
+			clearSearch() {
 				this.$emit('clear')
 			}
 		}
@@ -34,14 +39,14 @@
 </script>
 
 <style scoped>
-	.shortcut-wrapper .shortcut .search-history {
+	.search-history {
 		position: relative;
 		padding: 0 20px;
 		width: 100%;
 		box-sizing: border-box;
 	}
 	
-	.shortcut-wrapper .shortcut .search-history .title {
+	.search-history .title {
 		display: flex;
 		align-items: center;
 		height: 40px;
@@ -49,39 +54,45 @@
 		color: hsla(0, 0%, 100%, .5);
 	}
 	
-	.shortcut-wrapper .shortcut .search-history .title .text {
+	.search-history .title .text {
 		flex: 1;
 		font-weight: 400;
 	}
 	
-	.shortcut-wrapper .shortcut .search-history .title .clear {
+	.search-history .title .clear {
 		position: relative;
 		padding: 8px;
 		margin-right: -8px;
 	}
 	
-	.search-list .search-item{
+	.search-item {
 		display: flex;
 		align-items: center;
-		flex-direction: row;
-		flex-wrap: nowrap;
 		height: 40px;
 		overflow: hidden;
 	}
 	
-	.search-list .search-item .text {
+	.list-enter-active,
+	.list-leave-active {
+		transition: all 0.1s;
+	}
+	
+	.list-enter,
+	.list-leave-to {
+		height: 0;
+	}
+	
+	.text {
 		flex: 1;
-		color: hsla(0, 0%, 100%, .5);
+		color: rgba(255, 255, 255, 0.5);
 		font-size: 16px;
 	}
-	.search-list .search-item .icon {
-		
-	}
-	.search-list .search-item .icon-delete {
+	.icon{
 		font-size: 12px;
-		color: hsla(0, 0%, 100%, .3);
-		display: inline-block;
-		padding: 8px;
-		margin-right: -8px;
+	}
+	
+	.icon .icon-delete {
+		font-size: 12px;
+		color: rgba(255, 255, 255, 0.3);
 	}
 </style>

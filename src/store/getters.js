@@ -23,3 +23,5 @@ export const disc = state => state.disc
 export const ranking = state => state.ranking
 
 export const searchHistory = state => state.searchHistory
+
+export const playHistory = state => state.playHistory
