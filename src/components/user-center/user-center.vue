@@ -7,17 +7,17 @@
 			<div class="switches-wrapper">
 				<switches @switch="switchItem" :switches="switchesText" :currentIndex="currentIndex"></switches>
 			</div>
-			<div ref="playBtn" class="play-btn">
+			<div ref="playBtn" class="play-btn" @click="random">
 				<i class="icon-play"></i>
 				<span class="text">随机播放全部</span>
 			</div>
 			<div class="list-wrapper" ref="listWrapper">
-				<scroll ref="favoriteList" class="list-scroll" v-if="currentIndex===0">
+				<scroll ref="favoriteList" class="list-scroll" v-show="currentIndex===0">
 					<div class="list-inner">
-						<song-list @select="selectSong" :songs="favoriteSongs"></song-list>
+						<song-list @select="selectSong" :songs="favoriteSong"></song-list>
 					</div>
 				</scroll>
-				<scroll ref="scrollBox" class="list-scroll" v-if="currentIndex===1" :data="playHistory">
+				<scroll ref="scrollBox" class="list-scroll" v-show="currentIndex===1" :data="playHistory">
 					<div class="list-inner">
 						<song-list :songs="playHistory" @select="selectSong"></song-list>
 					</div>
@@ -34,12 +34,12 @@
 	import switches from 'base/switches/switches'
 	import scroll from 'base/scroll/scroll'
 	import songList from 'base/song-list/song-list'
-	import {userCenter,playlistMixin} from 'common/js/mixin.js'
-	import {getPlayerHistory} from 'common/js/catch.js'
+	import { userCenter, playlistMixin } from 'common/js/mixin.js'
+	import { getPlayerHistory } from 'common/js/catch.js'
 	import noResult from 'base/no-result/no-result'
 	import Song from 'common/js/song.js'
 	export default {
-		mixins:[userCenter,playlistMixin],
+		mixins: [userCenter, playlistMixin],
 		data() {
 			return {
 				switchesText: [{
@@ -48,38 +48,54 @@
 					name: '最近听的',
 				}],
 				currentIndex: 0,
-				noResult:true,
-				noResultDesc:'暂无收藏歌曲',
-				favoriteSongs:[]
+				favoriteSongs: []
 			}
 		},
 		methods: {
 			back() {
 				this.$router.back();
 			},
-			switchItem(currentIndex){
+			switchItem(currentIndex) {
 				this.currentIndex = currentIndex;
 			},
-			selectSong(item,index){
-				if (index !== 0) {
-		          this.insertSong(new Song(item))
-		       }
+			selectSong(item, index) {
+				this.insertSong(new Song(item))
 			},
-			favoriteList(){
-				
+			favoriteList() {
+
 			},
-			handlePlaylist(playlist){
-				if(playlist.length > 0 && this.songs != '' && this.$refs.scrollBox){
-					setTimeout(()=>{
-						this.$refs.listWrapper.style.bottom = this.minPlayerHeight+ 'px';
-						this.$refs.scrollBox.refresh();
-					},20)
-				}else if(playlist.length == 0 && this.songs != '' && this.$refs.scrollBox){
-					setTimeout(()=>{
-						this.$refs.listWrapper.style.bottom = 0;
-						this.$refs.scrollBox.refresh();
-					},20)	
+			handlePlaylist(playlist) {
+				if(playlist.length > 0 && this.songs != '') {
+					this.$refs.listWrapper.style.bottom = this.minPlayerHeight + 'px';
+				} else if(playlist.length == 0 && this.songs != '') {
+					this.$refs.listWrapper.style.bottom = 0;
 				}
+				this.initScroll()
+			},
+			initScroll() {
+				let scroll = this.$refs.favoriteList
+				if(this.currentIndex == 1) {
+					scroll = this.$refs.scrollBox
+				}
+				setTimeout(() => {
+					scroll.refresh();
+				})
+			},
+			random() {
+				let songs = []
+				if(this.currentIndex == 0 && this.favoriteSong != '') {
+					songs = this.favoriteSong;
+				} else if(this.currentIndex == 1 && this.playHistory != '') {
+					songs = this.playHistory;
+				} else {
+					return
+				}
+				let newsongs = songs.map((item) => {
+					return new Song(item)
+				})
+				this.randomPlay({
+					list: newsongs
+				})
 			}
 		},
 		components: {
@@ -88,25 +104,28 @@
 			songList,
 			noResult
 		},
-		mounted(){
-			
+		mounted() {
+
 		},
-		computed:{
-			playHistory(){
-				return getPlayerHistory()
-			}
+		computed: {
+			noResult() {
+				if(this.currentIndex === 0) {
+					return !this.favoriteSong.length
+				} else {
+					return !this.playHistory.length
+				}
+			},
+			noResultDesc() {
+				if(this.currentIndex === 0) {
+					return '暂无收藏歌曲'
+				} else {
+					return '你还没有听过歌曲'
+				}
+			},
 		},
-		watch:{
-			currentIndex(newVaule){
-					this.handlePlaylist(this.playlist);
-					if(newVaule == 0 && this.favoriteSongs == ''){
-							this.noResult = true;
-							return
-					}else if(newVaule == 1 && this.playHistory == ''){
-							this.noResult = true;
-							return
-					}
-					this.noResult = false;
+		watch: {
+			currentIndex() {
+				this.initScroll()
 			}
 		}
 	}
@@ -187,9 +206,7 @@
 		overflow: hidden;
 	}
 	
-	.list-inner {
-		
-	}
+	.list-inner {}
 	
 	.no-result-wrapper {
 		position: absolute;

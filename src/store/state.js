@@ -1,5 +1,5 @@
 import {playMode} from 'common/js/config.js'
-import {loadSearch} from 'common/js/catch.js'
+import {loadSearch,loadPlayerHistory,loadFavoriteList} from 'common/js/catch.js'
 const state = {
 	singer:{},
 	playing:false,   //播放状态
@@ -12,7 +12,8 @@ const state = {
 	disc:{},
 	ranking:{},
 	searchHistory:loadSearch(),
-	playHistory:[]
+	playHistory:loadPlayerHistory(),
+	favoriteSong:loadFavoriteList()
 }
 
 export default state

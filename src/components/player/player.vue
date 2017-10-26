@@ -47,7 +47,7 @@
 						<div class="icon i-left" @click="songPre" :class="{'disable':!songReady}"><i class="icon-prev"></i></div>
 						<div class="icon i-center" @click="changePlaying" :class="{'disable':!songReady}"><i :class="playing?'icon-pause':'icon-play'"></i></div>
 						<div class="icon i-right" @click="songNext" :class="{'disable':!songReady}"><i class="icon-next"></i></div>
-						<div class="icon i-right"><i class="icon icon-not-favorite"></i></div>
+						<div class="icon i-right" @click="addFavorite"><i class="icon" :class="favoriteIcon"></i></div>
 					</div>
 				</div>
 			</div>
@@ -74,7 +74,7 @@
 			</div>
 		</transition>
 		<play-list ref="playList"></play-list>
-		<audio ref="audio" :src="currentSong.url" @canplay="audioReady" @error="audioError" @timeupdate="updateTime" @ended="end"></audio>
+		<audio ref="audio" :src="currentSong.url" @play="audioReady" @error="audioError" @timeupdate="updateTime" @ended="end"></audio>
 	</div>
 </template>
 
@@ -103,6 +103,14 @@
 			iconMode() {
 				return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
 			},
+			favoriteIcon(){
+				
+				let index = this.favoriteSong.findIndex((item)=>{
+					return item.id == this.currentSong.id
+				})
+				return index > -1? 'icon-favorite' : 'icon-not-favorite'
+				
+			},
 			...mapGetters({
 				playlist: 'playlist',
 				fullScreen: 'fullScreen',
@@ -111,7 +119,8 @@
 				currentIndex: 'currentIndex',
 				mode: 'mode',
 				sequenceList: 'sequenceList',
-				minPlayerHeight:'minPlayerHeight'
+				minPlayerHeight:'minPlayerHeight',
+				favoriteSong:'favoriteSong'
 			})
 		},
 		created() {
@@ -212,33 +221,37 @@
 				if(!this.songReady) {
 					return
 				}
-				if(this.playlist.length == 0){
+				if(this.playlist.length == 1){
 					this.loop();
+					return
 				}else{
-					this.songReady = false;
+					
 					let index = this.currentIndex == 0 ? this.playlist.length - 1 : this.currentIndex - 1
 					this.setCurrentIndex(index);
 					if(!this.playing) {
 						this.changePlaying();
 					}
 				}
+				this.songReady = false;
 				
 			},
 			songNext() {
+				
 				if(!this.songReady) {
 					return
 				}
-				if(this.playlist.length == 0){
+				if(this.playlist.length == 1){
 					this.loop();
+					return
 				}else{
-					this.songReady = false;
+					
 					let index = this.currentIndex == this.playlist.length - 1 ? 0 : this.currentIndex + 1
 					this.setCurrentIndex(index);
 					if(!this.playing) {
 						this.changePlaying();
 					}
 				}
-				
+				this.songReady = false;
 			},
 			audioReady() {
 				this.songReady = true;
@@ -405,8 +418,12 @@
 				setPlayList: 'SET_PLAYLIST',
 				setMinPlayerHeight:'setMinPlayerHeight'
 			}),
+			addFavorite(){
+				this.setFavoriteSong(this.currentSong);
+			},
 			...mapActions({
-				setPlayHistory:'setPlayHistory'
+				setPlayHistory:'setPlayHistory',
+				setFavoriteSong:'setFavoriteSong'
 			})
 		},
 		mounted() {
@@ -433,26 +450,30 @@
 				}
 				this.currentTime = 0;
 				this.currentProgress = 0;
-				
-				setTimeout(() => {
+				clearTimeout(this.timer)
+				this.timer = setTimeout(() => {
 					this.$refs.audio.play();
+						this.currentSong.getLyricData(this).then((lyricData) => {
+						if(this.currentSong.lyric !== lyricData){
+							return
+						}
+						this.getLyric(lyricData);
+					}).catch(()=>{
+						this.playingLyric = null;
+						this.playingLyricText = '';
+						this.currentLineNum = 0;
+					});
 				},1000)
-//				if(!this.currentSong.getLyricData){
-//					return
-//				}
-				this.currentSong.getLyricData(this).then((lyricData) => {
-					this.getLyric(lyricData);
-				}).catch(()=>{
-					this.playingLyric = null;
-					this.playingLyricText = '';
-					this.currentLineNum = 0;
-				});
+
+				
 			},
 			playing(newPlaying) {
 				let audio = this.$refs.audio;
-				let lyric = this.playingLyric
 				this.$nextTick(() => {
 					newPlaying ? audio.play() : audio.pause();
+//					if(this.playingLyric){
+//						this.playingLyric.togglePlay();
+//					}
 				})
 			},
 			currentTime() {
@@ -894,4 +915,7 @@
 	    font-size: 14px;
 	    color: hsla(0,0%,100%,.5);
 	}
+	.player .bottom .operators .icon-favorite {
+    color: #d93f30;
+}
 </style>

@@ -9,7 +9,7 @@
 						<li class="item" v-for="(item,index) in sequenceList" :key="item.id" @click="selectSong(index,item)" ref="songItem">
 							<i class="current" :class="currentNowSong(item)"></i>
 							<span class="text">{{item.name}}</span>
-							<span class="like"><i class="icon-not-favorite"></i></span>
+							<span class="like" @click.stop="addFavorite(item)"><i :class="favoriteIcon(item)"></i></span>
 							<span class="delete" @click.stop="chooseDeleteSong(item)"><i class="icon-delete"></i></span>
 						</li>
 					</transition-group>
@@ -108,7 +108,17 @@
 			},
 			openAddsong(){
 				this.$refs.addSong.addSongShow();
-			}
+			},
+			addFavorite(item){
+				this.setFavoriteSong(item);
+			},
+			favoriteIcon(song){
+				let index = this.favoriteSong.findIndex((item)=>{
+					return item.id == song.id
+				})
+				return index > -1? 'icon-favorite' : 'icon-not-favorite'
+				
+			},
 		},
 		mounted(){
 			

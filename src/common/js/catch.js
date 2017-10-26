@@ -4,7 +4,10 @@ const SEARCH_KEY = '__search__';
 const SEARCH_LENGTH = 15;
 
 const PLAY_HISTORY_KEY = '__playHistory__'
-const PLAY_HISTORY_LENGTH = 15
+const PLAY_HISTORY_LENGTH = 20
+
+const FAVORITE_SONG_KEY = '__favoriteSong__'
+const FAVORITE_SONG_LENGTH = 20
 
 function insertArray(arr,val,compare,maxLen){
 	const index = arr.findIndex(compare);
@@ -68,6 +71,26 @@ export function setPlayerHistory(song){
 	return playHistory
 }
 
-export function getPlayerHistory(){
+export function loadPlayerHistory(){
 	return storage.get(PLAY_HISTORY_KEY,[])
+}
+
+export function setFavoriteList(song){
+	let favoriteSong = storage.get(FAVORITE_SONG_KEY,[]);
+	let index = favoriteSong.findIndex((item)=>{
+		return item.id === song.id
+	})
+	if(index > -1){
+		favoriteSong.splice(index,1)
+	}else{
+		favoriteSong.unshift(song);
+	}
+	
+	
+	storage.set(FAVORITE_SONG_KEY,favoriteSong);
+	return favoriteSong
+}
+
+export function loadFavoriteList(){
+	return storage.get(FAVORITE_SONG_KEY,[]);
 }

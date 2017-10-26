@@ -40,7 +40,8 @@ export const playerMixin = {
 			mode:'mode',
 			sequenceList:'sequenceList',
 			currentSong:'currentSong',
-			playlist:'playlist'
+			playlist:'playlist',
+			favoriteSong:'favoriteSong'
 		})
 	},
 	methods:{
@@ -53,7 +54,7 @@ export const playerMixin = {
 		...mapActions({
 			deleteSong:'deleteSong',
 			clearAllSongs:'clearAllSongs',
-			
+			setFavoriteSong:'setFavoriteSong',
 		})
 	}
 }
@@ -79,7 +80,10 @@ export const userCenter = {
 	computed:{
 		...mapGetters({
 			searchHistory:'searchHistory',
-			playlist:'playlist'
+			playHistory:'playHistory',
+			playlist:'playlist',
+			favoriteSong:'favoriteSong'
+			
 		})
 	},
 	methods:{
@@ -87,7 +91,9 @@ export const userCenter = {
 			deleteSearchHistory:'deleteSearchHistory',
 			saveSearchHistory:'saveSearchHistory',
 			selectPlay:'selectPlay',
-			insertSong:'insertSong'
+			insertSong:'insertSong',
+			setFavoriteSong:'setFavoriteSong',
+			randomPlay:'randomPlay'
 		})
 	}
 }
