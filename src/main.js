@@ -8,6 +8,10 @@ import htmlCssAuto from './common/js/htmlAuto.js'
 import fastClick from 'fastclick'
 import vueLazyLoad from 'vue-lazyload'
 
+import VConsole from 'vconsole'
+//var vConsole = new VConsole();
+//console.log('test')
+
 Vue.use(vueLazyLoad,{
 	loading:require('common/image/default.png'),
 	attempt: 1
