@@ -103,7 +103,6 @@
 				let index = this.sequenceList.findIndex((item)=>{
 					return item.id == this.currentSong.id
 				})
-				console.log(index)
 				this.$refs.listContent.scrollToElement(songItem[index],200)
 			},
 			openAddsong(){
