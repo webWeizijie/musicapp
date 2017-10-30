@@ -62,7 +62,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component:startPage,
+      redirect:'/recommend'
     },
     {
     	path:'/recommend',

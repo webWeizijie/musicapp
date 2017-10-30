@@ -4,6 +4,7 @@
 			<div class="time" @click="router">
 				跳过 {{time}}s
 			</div>
+			<img src="./index.png" />
 		</div>
 	</transition>
 </template>
@@ -72,5 +73,10 @@
 		border: 1px solid rgba(255, 255, 255, 0.5);
 		padding: 5px 11px;
 		border-radius: 20px;
+	}
+	.star-page img{
+		display: block;
+		height: 100%;
+		margin: 0 auto;
 	}
 </style>
