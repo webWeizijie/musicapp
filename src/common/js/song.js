@@ -1,6 +1,7 @@
 import { getLyric } from 'api/song.js'
 import vueResource from 'vue-resource'
 import { Base64 } from 'js-base64'
+import { getSongUrl } from '../../api/song'
 
 export default class Song {
 	constructor({
@@ -55,6 +56,7 @@ export default class Song {
 }
 
 export function createSong(musicData) {
+	console.log(getSongUrl.url)
 	return new Song({
 		id: musicData.songid,
 		mid: musicData.songmid,
@@ -63,7 +65,8 @@ export function createSong(musicData) {
 		album: musicData.albumname,
 		duration: musicData.interval,
 		image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-		url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`
+		// url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`
+		url:getSongUrl.url.replace('||', musicData.songmid)
 	})
 }
 

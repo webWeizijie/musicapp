@@ -10,7 +10,7 @@ export const getRecommend = {
 	jsonp:options.jsonp,
 }
 export const getDiscList = {
-	 url : '/api/getDiscList',
+	 url : '/music/api/getDiscList',
 	 params : Object.assign({}, commonParams, {
 		platform: 'yqq',
 		hostUin: 0,
@@ -26,7 +26,7 @@ export const getDiscList = {
 }
 
 export const getDiscData = {
-	url : '/api/disc',
+	url : '/music/api/disc',
 	 params : Object.assign({}, commonParams, {
 	 	g_tk:67232076,
 		type:1,
